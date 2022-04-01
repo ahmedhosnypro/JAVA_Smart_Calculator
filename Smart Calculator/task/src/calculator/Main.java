@@ -3,38 +3,44 @@ package calculator;
 import java.util.Scanner;
 
 public class Main {
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        start();
+    }
+
+    private static void start() {
         while (true) {
-            String input = scanner.nextLine().trim();
-            String[] line = input.split(" ");
-            if (line.length == 1 && !line[0].equals("")) {
-                if (input.equalsIgnoreCase("/exit")) {
-                    System.out.println("Bye!");
-                    System.exit(0);
-                    break;
-                } else if (input.equalsIgnoreCase("/help")) {
-                    System.out.println("The program calculates the sum of numbers");
-                } else {
-                    System.out.println(line[0]);
-                }
-            } else if (line.length > 1) {
-                int out = 0;
-                int tmpNum = 0;
-                char operation = '+';
-                for (int i = 0; i < line.length; i++) {
-                    if (i % 2 == 0) {
-                        tmpNum = Integer.parseInt(line[i]);
-                    } else {
-                        operation = defineOperation(line[i]);
-                        out = calc(out, tmpNum, operation);
+            processInput();
+        }
+    }
+
+    private static void processInput() {
+        String input = scanner.nextLine().trim();
+        if (input.startsWith("/")) {
+            runCommand(input);
+            return;
+        }
+        String[] line = input.split(" ");
+        int out = 0;
+        int tmpNum = 0;
+        char operation = '+';
+        for (int i = 0; i < line.length; i++) {
+            if (i % 2 == 0) {
+                try {
+                    tmpNum = Integer.parseInt(line[i]);
+                } catch (Exception e) {
+                    if (!(line.length == 1 && line[0].equals(""))) {
+                        System.out.println("Invalid expression");
                     }
+                    return;
                 }
                 out = calc(out, tmpNum, operation);
-                System.out.println(out);
+            } else {
+                operation = defineOperation(line[i]);
             }
         }
+        System.out.println(out);
     }
 
     private static int calc(int out, int num, char operation) {
@@ -45,6 +51,17 @@ public class Main {
         };
     }
 
+    private static void runCommand(String command) {
+        switch (command) {
+            case "/exit" -> {
+                System.out.println("Bye!");
+                System.exit(0);
+            }
+            case "/help" -> System.out.println("The program calculates the sum of numbers");
+            default -> System.out.println("Unknown command");
+        }
+    }
+
     private static char defineOperation(String opGroup) {
         int minus = 0;
         char[] operations = opGroup.toCharArray();
@@ -53,9 +70,9 @@ public class Main {
                 minus++;
             }
         }
-        if (minus % 2 != 0 || minus == 0) {
-            return '+';
+        if (minus > 0 && minus % 2 != 0) {
+            return '-';
         }
-        return '-';
+        return '+';
     }
 }
