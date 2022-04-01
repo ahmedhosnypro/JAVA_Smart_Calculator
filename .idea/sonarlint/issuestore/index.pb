@@ -23,18 +23,24 @@ y.idea/modules/Smart Calculator/task/build/test-results/Smart_Calculator.Smart_C
 {.idea/modules/Smart Calculator/task/build/reports/tests/Smart_Calculator.Smart_Calculator-task-build-reports-tests.test.iml,5\1\515257e381a5983a60380992f9874c4a68bc9137
 —
 g.idea/modules/Smart Calculator/task/build/tmp/Smart_Calculator.Smart_Calculator-task-build-tmp.test.iml,8\8\889b9845ed2274673616b4ae9d5f9a2d4e984220
-:
-
-.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
 S
 #Smart Calculator/2+2/task-info.yaml,c\6\c6d79cfa07119874af964469dba6ff96f36b2182
 T
 $Smart Calculator/2+2+/task-info.yaml,2\1\213fce7b5652b918a3426c59b8d672078de515e1
-Y
-)Smart Calculator/Variables/task-info.yaml,c\6\c667a2e6d950f70d02144053ef991478dafa7638
 ^
 .Smart Calculator/Count them all/task-info.yaml,1\e\1ed3eb05f21fea009486cfe759f312543268e48c
 d
 4Smart Calculator/Iâ€™ve got the power/task-info.yaml,0\0\0090e2b596ea2450207d159e3934f9e6fb0eb05c
 X
 (Smart Calculator/Very big/task-info.yaml,5\1\517b805815f599ac4cb85a985b749d222c19a2c1
+`
+0Smart Calculator/Add subtractions/task-info.yaml,a\8\a8174d771a57117584c3c70c25f7d254bdf6f727
+T
+$Smart Calculator/Variables/task.html,3\4\345016a88cf425f6a677156f1ef90079f3557db0
+?
+settings.gradle,0\5\05efc8b1657769a27696d478ded1e95f38737233
+<
+build.gradle,f\0\f07866736216be0ee2aba49e392191aeae700a35
+:
+
+.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
