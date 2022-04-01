@@ -174,6 +174,22 @@ files:
         }
     }
   learner_created: false
-feedback_link: https://hyperskill.org/projects/42/stages/223/implement#comment
-status: Unchecked
+feedback_link: https://hyperskill.org/learn/step/5319#comment
+status: Failed
+feedback:
+  message: |-
+    Wrong answer in test #2
+
+    Incorrect sum of positive and negative numbers.
+
+    Please find below the output of your program during this failed test.
+    Note that the &#39;&gt;&#39; character indicates the beginning of the input line.
+
+    ---
+
+    &gt; 7 + 1 + 4
+    12
+    &gt; 23 - 17 - 4
+    44
+  time: Fri, 01 Apr 2022 00:01:31 UTC
 record: -1

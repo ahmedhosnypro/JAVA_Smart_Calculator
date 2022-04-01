@@ -20,12 +20,42 @@ public class Main {
                     System.out.println(line[0]);
                 }
             } else if (line.length > 1) {
-                int sum = 0;
-                for (var n : line) {
-                    sum += Integer.parseInt(n);
+                int out = 0;
+                int tmpNum = 0;
+                char operation = '+';
+                for (int i = 0; i < line.length; i++) {
+                    if (i % 2 == 0) {
+                        tmpNum = Integer.parseInt(line[i]);
+                    } else {
+                        operation = defineOperation(line[i]);
+                        out = calc(out, tmpNum, operation);
+                    }
                 }
-                System.out.println(sum);
+                out = calc(out, tmpNum, operation);
+                System.out.println(out);
             }
         }
+    }
+
+    private static int calc(int out, int num, char operation) {
+        return switch (operation) {
+            case '+' -> out + num;
+            case '-' -> out - num;
+            default -> throw new IllegalArgumentException();
+        };
+    }
+
+    private static char defineOperation(String opGroup) {
+        int minus = 0;
+        char[] operations = opGroup.toCharArray();
+        for (var ch : operations) {
+            if (ch == '-') {
+                minus++;
+            }
+        }
+        if (minus % 2 != 0 || minus == 0) {
+            return '+';
+        }
+        return '-';
     }
 }
