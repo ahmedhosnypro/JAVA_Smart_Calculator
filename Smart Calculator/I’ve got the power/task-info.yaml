@@ -235,6 +235,33 @@ files:
         }
     }
   learner_created: false
+- name: src/calculator/ExpressionChecker.java
+  visible: true
+  learner_created: true
+- name: src/calculator/Reader.java
+  visible: true
+  learner_created: true
+- name: src/calculator/App.java
+  visible: true
+  learner_created: true
+- name: src/calculator/IdentifierChecker.java
+  visible: true
+  learner_created: true
+- name: src/calculator/Assigner.java
+  visible: true
+  learner_created: true
+- name: src/calculator/Calculator.java
+  visible: true
+  learner_created: true
+- name: src/calculator/Evaluator.java
+  visible: true
+  learner_created: true
+- name: src/calculator/PostfixCalculator.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/5322#comment
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Sat, 02 Apr 2022 21:01:40 UTC
+record: 7

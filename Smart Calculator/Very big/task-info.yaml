@@ -319,6 +319,450 @@ files:
         }
     }
   learner_created: false
+- name: src/calculator/Assigner.java
+  visible: true
+  text: |
+    package calculator;
+
+    import java.util.Map;
+
+    import static calculator.ExpressionChecker.checkExpression;
+    import static calculator.IdentifierChecker.*;
+
+    public class Assigner {
+        private Assigner() {
+        }
+
+        static void assignVariable(Map<String, Integer> varMap, String input) {
+            String right = input.substring(0, input.indexOf("=")).trim();
+            String left = input.substring(input.indexOf("=") + 1).trim();
+            if (!right.contains("(") && !right.contains(")") && checkIdentifier(right)
+                    && !left.contains("=") && checkExpression(left) && checkIdentifiers(left) && isKnownIdentifiers(varMap, left)) {
+                Integer leftResult = PostfixCalculator.calc(varMap, left);
+                if (leftResult != null) {
+                    varMap.put(right, leftResult);
+                }
+            } else if (right.contains("(") || right.contains(")") || !checkIdentifier(right)) {
+                System.out.println("Invalid identifier");
+            } else if (left.contains("=") || !checkIdentifiers(left)) {
+                System.out.println("Invalid assignment");
+            } else if (!checkExpression(left)) {
+                System.out.println("Invalid expression");
+            } else if (!isKnownIdentifiers(varMap, left)) {
+                System.out.println("Unknown variable");
+            }
+        }
+    }
+  learner_created: true
+- name: src/calculator/Evaluator.java
+  visible: true
+  text: |
+    package calculator;
+
+    import java.util.Map;
+
+    import static calculator.ExpressionChecker.checkExpression;
+    import static calculator.IdentifierChecker.checkIdentifiers;
+    import static calculator.IdentifierChecker.isKnownIdentifiers;
+
+    public class Evaluator {
+        private Evaluator() {
+        }
+
+        static void evaluate(Map<String, Integer> varMap, String input) {
+            if (checkExpression(input) && checkIdentifiers(input) && isKnownIdentifiers(varMap, input)) {
+                Integer result = PostfixCalculator.calc(varMap, input);
+                if (result != null) {
+                    System.out.println(result);
+                } else {
+                    System.out.println("evaluation error");
+                }
+            } else if (!checkIdentifiers(input)) {
+                System.out.println("Invalid identifier");
+            } else if (!checkExpression(input)) {
+                System.out.println("Invalid expression");
+            } else if (!isKnownIdentifiers(varMap, input)) {
+                System.out.println("Unknown variable");
+            }
+        }
+    }
+  learner_created: true
+- name: src/calculator/ExpressionChecker.java
+  visible: true
+  text: |-
+    package calculator;
+
+    import java.util.Arrays;
+
+    public class ExpressionChecker {
+
+        private ExpressionChecker() {
+        }
+
+        static boolean checkExpression(String expression) {
+            if (expression.contains("(") && expression.contains(")")) {
+                if (!checkParenthesesNumber(expression)) {
+                    return false;
+                }
+                return expression.indexOf(")") >= expression.indexOf("(");
+            } else if (expression.contains("(")) {
+                return false;
+            } else if (expression.contains(")")) {
+                return false;
+            } else {
+                String operation = "+";
+                boolean isOperationsSequence = false;
+                for (var element : expression.split(" ")) {
+                    if (element.matches("[a-zA-Z]+") || element.matches("\\d+")) {
+                        isOperationsSequence = false;
+                    } else if (element.matches("[)+-/*(^]")) {
+                        if (isOperationsSequence) {
+                            switch (operation) {
+                                case "+":
+                                case "-":
+                                    if (!element.matches("[+-]")) {
+                                        return false;
+                                    }
+                                    break;
+                                case "(":
+                                case ")":
+                                    if (!element.matches("[(-)]")) {
+                                        return false;
+                                    }
+                                    break;
+                                default:
+                                    return false;
+                            }
+                        } else {
+                            operation = element;
+                            isOperationsSequence = true;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        private static boolean checkParenthesesNumber(String expression) {
+            var openParenthesis = Arrays.stream(expression.split(" ")).filter(e -> e.equals("(")).count();
+            var closeParenthesis = Arrays.stream(expression.split(" ")).filter(e -> e.equals(")")).count();
+            return openParenthesis == closeParenthesis;
+        }
+    }
+  learner_created: true
+- name: src/calculator/IdentifierChecker.java
+  visible: true
+  text: |
+    package calculator;
+
+
+    import java.util.Map;
+
+    public class IdentifierChecker {
+        private IdentifierChecker() {
+        }
+
+        static boolean checkIdentifiers(String identifiers) {
+            for (var identifier : identifiers.split(" ")) {
+                if (identifier.matches(".*[a-zA-Z].*") && !checkIdentifier(identifier)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static boolean checkIdentifier(String identifier) {
+            return identifier.matches("[a-zA-Z]+");
+        }
+
+        static boolean isKnownIdentifiers(Map<String, Integer> varMap, String input) {
+            for (var identifier : input.split(" ")) {
+                if (identifier.matches("[a-zA-Z]+") && !varMap.containsKey(identifier)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+  learner_created: true
+- name: src/calculator/Reader.java
+  visible: true
+  text: |
+    package calculator;
+
+    import java.util.Scanner;
+
+    public class Reader {
+        private Reader() {
+        }
+
+        private static final Scanner scanner = new Scanner(System.in);
+
+        static String read() {
+            return scanner.nextLine().trim()
+                    .replaceAll("[+]", " + ")
+                    .replaceAll("[-]", " - ")
+                    .replaceAll("[*]", " * ")
+                    .replaceAll("[/]", " / ")
+                    .replaceAll("[\\^]", " ^ ")
+                    .replaceAll("[(]", " ( ")
+                    .replaceAll("[)]", " ) ")
+                    .replaceAll("[=]", " = ")
+                    .replaceAll("\\s+", " ");
+        }
+    }
+  learner_created: true
+- name: src/calculator/App.java
+  visible: true
+  text: |
+    package calculator;
+
+    import java.util.HashMap;
+
+    import static calculator.Assigner.assignVariable;
+    import static calculator.Evaluator.evaluate;
+    import static calculator.Reader.read;
+
+    public class App {
+        private App() {
+        }
+
+        private static final HashMap<String, Integer> varMap = new HashMap<>();
+
+        static void start() {
+            while (true) {
+                processInput();
+            }
+        }
+
+        static void processInput() {
+            String input = read();
+            if (input.matches("\\s*/\\s*\\w+")) {
+                runCommand(input);
+            } else if ((input.contains("="))) {
+                assignVariable(varMap, input);
+            } else if (!input.equals("")) {
+                evaluate(varMap, input);
+            }
+        }
+
+        private static void runCommand(String command) {
+            command = command.replaceAll(" ", "");
+            switch (command) {
+                case "/exit":
+                    System.out.println("Bye!");
+                    System.exit(0);
+                    break;
+                case "/help":
+                    System.out.println("The program calculates the sum of numbers");
+                    break;
+                default:
+                    System.out.println("Unknown command");
+            }
+        }
+    }
+  learner_created: true
+- name: src/calculator/PostfixCalculator.java
+  visible: true
+  text: |-
+    package calculator;
+
+
+    import java.util.*;
+
+    public class PostfixCalculator {
+        private static String operation = "+";
+        private static boolean isOperationsSequence = false;
+        private static String lastOperation = "~";
+
+        private PostfixCalculator() {
+        }
+
+        static Integer calc(Map<String, Integer> varMap, String input) {
+            Deque<String> reorderingStack = new ArrayDeque<>();
+            Deque<String> postfixStack = new ArrayDeque<>();
+
+            for (var element : input.split(" ")) {
+                transElement(varMap, reorderingStack, postfixStack, element);
+            }
+            if (isOperationsSequence) {
+                pushOperation(reorderingStack, postfixStack, operation);
+            }
+            pushOperation(reorderingStack, postfixStack);
+            return postfixAnswer(postfixStack);
+        }
+
+        private static void transElement(Map<String, Integer> varMap, Deque<String> reorderingStack, Deque<String> postfixStack, String element) {
+            if (element.matches("[a-zA-Z]+") && varMap.containsKey(element)) {
+                if (varMap.get(element) != null) {
+                    int num = varMap.get(element);
+                    transValue(reorderingStack, postfixStack, num);
+                }
+            } else if (element.matches("\\d+")) {
+                int num = Integer.parseInt(element);
+                transValue(reorderingStack, postfixStack, num);
+            } else if (element.matches("[)+-/*(^]")) {
+                if (isOperationsSequence) {
+                    switch (element) {
+                        case "-":
+                            if (operation.matches("-")) {
+                                operation = "+";
+                            } else {
+                                operation = element;
+                            }
+                            break;
+                        case "(":
+                            pushOperation(reorderingStack, postfixStack, operation);
+                            operation = element;
+                            lastOperation = "(";
+                            break;
+                        case ")":
+                            if (!lastOperation.equals("(")) {
+                                operation = element;
+                                pushOperation(reorderingStack, postfixStack, operation);
+                            }
+                            break;
+                        default:
+                            operation = element;
+                    }
+                } else {
+                    if (element.equals(")")) {
+                        operation = element;
+                        pushOperation(reorderingStack, postfixStack, operation);
+                    } else {
+                        operation = element;
+                    }
+                    isOperationsSequence = true;
+                }
+            }
+        }
+
+
+        private static void transValue(Deque<String> reorderingStack, Deque<String> postfixStack, int num) {
+            if (isOperationsSequence && ((lastOperation.equals("(")) || postfixStack.isEmpty()) && operation.equals("-")) {
+                postfixStack.offerLast(String.valueOf(-num));
+                lastOperation = "~";
+            } else if (isOperationsSequence) {
+                pushOperation(reorderingStack, postfixStack, operation);
+                postfixStack.offerLast(String.valueOf(num));
+                lastOperation = "~";
+            } else {
+                postfixStack.offerLast(String.valueOf(num));
+            }
+            isOperationsSequence = false;
+        }
+
+        private static void pushOperation(Deque<String> reorderingStack, Deque<String> postfixStack, String operation) {
+            List<String> powerPriorities = List.of("^");
+            List<String> multiPriorities = List.of("*", "/", "^");
+            List<String> additivePriorities = List.of("+", "-", "*", "/", "^");
+
+            if (reorderingStack.isEmpty() || reorderingStack.peekLast().equals("(")) {
+                reorderingStack.offerLast(operation);
+                return;
+            }
+            switch (operation) {
+                case "-":
+                case "+": //!reorderingStack.isEmpty() ||
+                    while (!reorderingStack.isEmpty() && !reorderingStack.peekLast().equals("(") && additivePriorities.contains(reorderingStack.peekLast())) {
+                        postfixStack.offerLast(reorderingStack.pollLast());
+                    }
+                    reorderingStack.offerLast(operation);
+                    break;
+                case "/":
+                case "*":
+                    while (!reorderingStack.isEmpty() && !reorderingStack.peekLast().equals("(") && multiPriorities.contains(reorderingStack.peekLast())) {
+                        postfixStack.offerLast(reorderingStack.pollLast());
+                    }
+                    reorderingStack.offerLast(operation);
+                    break;
+                case "^":
+                    while (!reorderingStack.isEmpty() && !reorderingStack.peekLast().equals("(") && powerPriorities.contains(reorderingStack.peekLast())) {
+                        postfixStack.offerLast(reorderingStack.pollLast());
+                    }
+                    reorderingStack.offerLast(operation);
+                    break;
+                case "(":
+                    reorderingStack.offerLast(operation);
+                    break;
+                case ")":
+                    while (!reorderingStack.isEmpty()) {
+                        if (Objects.equals(reorderingStack.peekLast(), "(")) {
+                            reorderingStack.pollLast();
+                            break;
+                        } else {
+                            postfixStack.offerLast(reorderingStack.pollLast());
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static void pushOperation(Deque<String> reorderingStack, Deque<String> postfixStack) {
+            while (!reorderingStack.isEmpty()) {
+                if (reorderingStack.peekLast().equals(")") || reorderingStack.peekLast().equals("(")) {
+                    reorderingStack.pollLast();
+                }
+                postfixStack.offerLast(reorderingStack.pollLast());
+            }
+        }
+
+        private static Integer postfixAnswer(Deque<String> postfixStack) {
+            Deque<String> answerStack = new ArrayDeque<>();
+            while (!postfixStack.isEmpty()) {
+                if (postfixStack.peek().matches("-*\\d+")) {
+                    answerStack.offerLast(postfixStack.pollFirst());
+                } else if (postfixStack.peek().matches("[+-/*^]")) {
+                    int sndNum = Integer.parseInt(Objects.requireNonNull(answerStack.pollLast()));
+                    int fstNum = Integer.parseInt(Objects.requireNonNull(answerStack.pollLast()));
+                    int result = Calculator.calc(fstNum, sndNum, Objects.requireNonNull(postfixStack.pollFirst()));
+                    answerStack.offerLast(String.valueOf(result));
+                }
+            }
+            if (answerStack.size() == 1) {
+                try {
+                    return Integer.parseInt(answerStack.poll());
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+            }
+            return null;
+        }
+    }
+  learner_created: true
+- name: src/calculator/Calculator.java
+  visible: true
+  text: |
+    package calculator;
+
+    public class Calculator {
+        private Calculator() {
+        }
+
+        static int calc(int fstNum, int sndNum, String operation) {
+            switch (operation) {
+                case "+":
+                    return fstNum + sndNum;
+                case "-":
+                    return fstNum - sndNum;
+                case "*":
+                    return fstNum * sndNum;
+                case "/":
+                    return fstNum / sndNum;
+                case "^":
+                    return (int) Math.pow(fstNum, sndNum);
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+    }
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/5323#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Well done! You've finished the project. Select a new project on <a href="https://hyperskill.org/projects">JetBrains
+    Academy</a> to continue learning.
+  time: Sat, 02 Apr 2022 21:37:14 UTC
 record: -1
